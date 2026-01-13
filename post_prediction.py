@@ -1,33 +1,20 @@
-import asyncio
-from telegram import Bot
+import requests
+import os
 
-# ======================
-# SETTINGS
-# ======================
-BOT_TOKEN = "8591884031:AAGFIxdI5rLsq_qlLBemgO9O1rNbLyHuxIk"
-CHANNEL_ID = "-1003263006563"
-TEST_MODE = True
+API_KEY = os.getenv("33f0f0f7-1e75-4743-855b-0333ecb9812f")
 
-bot = Bot(token=BOT_TOKEN)
+def get_prediction():
+    url = f"https://api.cricapi.com/v1/currentMatches?apikey={API_KEY}&offset=0"
+    res = requests.get(url).json()
 
-async def main():
-    if TEST_MODE:
-        message = (
-            "🏏 TEST PREDICTION\n\n"
-            "Match: India 🇮🇳 vs Australia 🇦🇺\n"
-            "Prediction: India will win ✅\n"
-            "Confidence: 65%\n\n"
-            "🤖 Bot is working perfectly!"
-        )
+    if "data" not in res or len(res["data"]) == 0:
+        return "No live matches right now ❌"
 
-        await bot.send_message(chat_id=CHANNEL_ID, text=message)
-        print("✅ Test message sent successfully")
+    match = res["data"][0]
 
-if __name__ == "__main__":
-    asyncio.run(main())
-import time
+    team1 = match["teams"][0]
+    team2 = match["teams"][1]
 
-print("Bot started and running forever")
+    prediction = f"🏏 Match Prediction\n\n{team1} vs {team2}\n\n🤖 AI Prediction: {team1} has higher winning chance 📊"
 
-while True:
-    time.sleep(60)
+    return prediction
