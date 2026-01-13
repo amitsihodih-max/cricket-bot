@@ -4,17 +4,26 @@ import os
 API_KEY = os.getenv("33f0f0f7-1e75-4743-855b-0333ecb9812f")
 
 def get_prediction():
-    url = f"https://api.cricapi.com/v1/currentMatches?apikey={API_KEY}&offset=0"
-    res = requests.get(url).json()
+    url = f"https://api.cricketdata.org/v1/currentMatches?apikey={API_KEY}"
 
-    if "data" not in res or len(res["data"]) == 0:
-        return "No live matches right now ❌"
+    response = requests.get(url)
+    data = response.json()
 
-    match = res["data"][0]
+    matches = data.get("data", [])
 
-    team1 = match["teams"][0]
-    team2 = match["teams"][1]
+    for match in matches:
+        status = match.get("status", "").lower()
 
-    prediction = f"🏏 Match Prediction\n\n{team1} vs {team2}\n\n🤖 AI Prediction: {team1} has higher winning chance 📊"
+        if "live" in status:
+            team1 = match["teams"][0]
+            team2 = match["teams"][1]
 
-    return prediction
+            return (
+                f"🏏 LIVE MATCH ALERT!\n\n"
+                f"🔥 {team1} vs {team2}\n\n"
+                f"📊 Prediction:\n"
+                f"👉 {team1} slightly ahead\n\n"
+                f"⚠️ Play responsibly"
+            )
+
+    return None
