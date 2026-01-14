@@ -1,8 +1,11 @@
 import asyncio
+import os
 from telegram import Bot
+from post_prediction import send_prediction
 
-BOT_TOKEN = "8591884031:AAGFIxdI5rLsq_qlLBemgO9O1rNbLyHuxIk"
-CHANNEL_ID = "-1003263006563"
+BOT_TOKEN = os.getenv("8591884031:AAGFIxdI5rLsq_qlLBemgO9O1rNbLyHuxIk")
+CHANNEL_ID = os.getenv("-1003263006563")
+
 
 async def send_message():
     bot = Bot(token=BOT_TOKEN)
@@ -11,10 +14,11 @@ async def send_message():
         text="🤖 Cloud bot is alive!"
     )
 
+
 async def main():
-    while True:
-        await send_message()
-        await asyncio.sleep(3600)  # 1 hour
+    await send_message()
+    await send_prediction()   # send cricket prediction once
+
 
 if __name__ == "__main__":
     asyncio.run(main())
